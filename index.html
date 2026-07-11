@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ScoreCounter</title>
     <style>
+        /* 色彩變數 (白底黑字) */
+        :root {
+            --bg-main: #F4F4F6;       
+            --bg-card: #FFFFFF;       
+            --text-main: #1A1A1A;     
+            --text-sub: #7F8C8D;      
+            --name-bg: #1A1A1A;       
+            --name-text: #FFFFFF;     
+            --border-dash: #E2E8F0;   
+            --btn-border: #CBD5E1;    
+            --header-bg: #FFFFFF;     
+        }
+
+        /* 色彩變數 (黑底白字) */
+        .dark-theme {
+            --bg-main: #121212;
+            --bg-card: #1A1A1A;
+            --text-main: #FFFFFF;
+            --text-sub: #A0AEC0;
+            --name-bg: #FFFFFF;
+            --name-text: #1A1A1A;
+            --border-dash: #4A5568;
+            --btn-border: #4A5568;
+            --header-bg: #1A1A1A;
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -13,13 +39,13 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #F4F4F6; 
-            color: #1A1A1A;
+            background-color: var(--bg-main); 
+            color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow: hidden;
+            transition: background-color 0.2s, color 0.2s;
         }
 
-        /* 滿版安全防崩塌容器 */
         .app-container {
             position: fixed;
             top: 0;
@@ -31,17 +57,18 @@
             overflow: hidden;
         }
 
-        /* 頂部導航列：改為左右分開的 Flex 佈局，標題完美靠左 */
+        /* 頂部導航列 */
         .header {
-            background-color: #FFFFFF;
-            color: #000000;
+            background-color: var(--header-bg);
+            color: var(--text-main);
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 60px;
             padding: 0 15px;
-            border-bottom: 2px solid #1A1A1A;
+            border-bottom: 2px solid var(--text-main);
             flex-shrink: 0;
+            transition: background-color 0.2s, border-color 0.2s;
         }
         .header .title {
             font-size: 1.3rem;
@@ -52,23 +79,40 @@
         .header .right-box {
             display: flex;
             justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* 重置按鈕 */
-        .reset-btn {
-            background-color: #4A5568;
-            color: #FFFFFF;
+        /* 頂部功能按鈕通用樣式 */
+        .header-btn {
             border: none;
-            padding: 6px 14px;
+            height: 32px;
             font-size: 0.85rem;
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.1s, background-color 0.2s, color 0.2s;
             outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .reset-btn:active {
+        .header-btn:active {
             transform: scale(0.95);
+        }
+
+        /* 極簡黑白切換小方塊 */
+        .invert-btn {
+            width: 32px; /* 縮成正方形 */
+            background-color: #718096;
+            color: #FFFFFF;
+        }
+        
+        /* 重置按鈕 */
+        .reset-btn {
+            padding: 0 14px;
+            background-color: #4A5568;
+            color: #FFFFFF;
         }
 
         /* 主計分板區域 */
@@ -90,19 +134,20 @@
             display: flex;
             flex-direction: column;
             height: 100%; 
-            background-color: #FFFFFF;
-            border: 2px solid #1A1A1A;
+            background-color: var(--bg-card);
+            border: 2px solid var(--text-main);
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             overflow: hidden;
             min-height: 0; 
+            transition: background-color 0.2s, border-color 0.2s;
         }
 
-        /* 玩家名字 (黑底白字) */
+        /* 玩家名字 */
         .player-name {
             height: 40px;
-            background-color: #1A1A1A;
-            color: #FFFFFF;
+            background-color: var(--name-bg);
+            color: var(--name-text);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -113,6 +158,7 @@
             text-overflow: ellipsis;
             cursor: pointer;
             flex-shrink: 0;
+            transition: background-color 0.2s, color 0.2s;
         }
 
         /* 歷史分數紀錄區 */
@@ -123,7 +169,8 @@
             padding: 12px 0;
             display: flex;
             flex-direction: column;
-            background-color: #FFFFFF;
+            background-color: var(--bg-card);
+            transition: background-color 0.2s;
         }
 
         /* 每輪得分與小計 */
@@ -135,15 +182,17 @@
         .score-change {
             font-size: 0.95rem;
             font-weight: bold;
-            color: #1A1A1A;
+            color: var(--text-main);
             margin-bottom: 1px;
+            transition: color 0.2s;
         }
         .score-subtotal {
             font-size: 0.85rem;
-            color: #7F8C8D;
+            color: var(--text-sub);
+            transition: color 0.2s;
         }
 
-        /* 總分顯示格 (上方有虛線) */
+        /* 總分顯示格 */
         .total-box {
             height: 45px;
             display: flex;
@@ -151,10 +200,11 @@
             justify-content: center;
             font-size: 1.2rem;
             font-weight: 800;
-            color: #000000;
-            border-top: 2px dashed #E2E8F0;
-            background-color: #FFFFFF;
+            color: var(--text-main);
+            border-top: 2px dashed var(--border-dash);
+            background-color: var(--bg-card);
             flex-shrink: 0;
+            transition: all 0.2s;
         }
 
         /* 底部控制按鈕區 */
@@ -165,9 +215,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            background-color: #FFFFFF;
+            background-color: var(--bg-card);
             padding-bottom: 5px;
             flex-shrink: 0;
+            transition: background-color 0.2s;
         }
         .action-btns {
             display: flex;
@@ -176,9 +227,9 @@
 
         /* 方塊按鈕 */
         .btn {
-            background-color: #FFFFFF;
-            color: #1A1A1A;
-            border: 1.5px solid #CBD5E1;
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border: 1.5px solid var(--btn-border);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -190,7 +241,7 @@
         }
         .btn:active {
             transform: scale(0.9);
-            background-color: #F8FAFC;
+            opacity: 0.8;
         }
         .btn-plus {
             width: 32px;
@@ -209,15 +260,14 @@
             height: 26px;
             font-size: 0.75rem;
             font-weight: bold;
-            color: #7F8C8D;
-            border: 1px solid #E2E8F0;
-            background-color: #FFFFFF;
+            color: var(--text-sub);
+            border: 1px solid var(--border-dash);
+            background-color: var(--bg-card);
             border-radius: 4px;
+            transition: all 0.2s;
         }
         .btn-trash:active {
-            background-color: #FFF5F5;
-            color: #E74C3C;
-            border-color: #FED7D7;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -227,7 +277,8 @@
         <div class="header">
             <div class="title">ScoreCounter</div>
             <div class="right-box">
-                <button class="reset-btn" onclick="resetAll()">重置</button>
+                <button id="theme-btn" class="header-btn invert-btn" onclick="toggleTheme()">黑</button>
+                <button class="header-btn reset-btn" onclick="resetAll()">重置</button>
             </div>
         </div>
 
@@ -235,13 +286,19 @@
     </div>
 
     <script>
-        // 初始狀態
         var players = [
             { name: '玩家 1', history: [] },
             { name: '玩家 2', history: [] },
             { name: '玩家 3', history: [] },
             { name: '玩家 4', history: [] }
         ];
+
+        // 智能黑白文字切換邏輯
+        function toggleTheme() {
+            var hasDark = document.body.classList.toggle('dark-theme');
+            // 如果當前變成了黑底 (dark-theme)，文字就顯示「白」；否則顯示「黑」
+            document.getElementById('theme-btn').innerText = hasDark ? '白' : '黑';
+        }
 
         // 渲染介面
         function renderScoreboard() {
@@ -378,7 +435,6 @@
             }
         }
 
-        // 安全載入
         window.onload = function() {
             renderScoreboard();
         };
